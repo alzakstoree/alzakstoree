@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - ALZAK STORE</title>
-    <!-- Font Awesome للأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- ملف التنسيقات الخاص بلوحة التحكم -->
     <link rel="stylesheet" href="css/admin-style.css">
 </head>
 <body>
     <div class="admin-container">
-        <!-- ===== القائمة الجانبية (ثلاثة خطوط) ===== -->
+        <!-- القائمة الجانبية -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <i class="fas fa-crown"></i>
@@ -19,8 +17,7 @@
                 <i class="fas fa-times close-btn" onclick="toggleSidebar()"></i>
             </div>
             <div class="sidebar-menu">
-
-                <!-- مجموعة: الرئيسية -->
+                <!-- الرئيسية -->
                 <div class="menu-section">
                     <div class="menu-title">الرئيسية</div>
                     <ul>
@@ -30,8 +27,7 @@
                         <li><a href="#" onclick="loadSection('import')"><i class="fas fa-upload"></i> استيراد منتجات</a></li>
                     </ul>
                 </div>
-
-                <!-- مجموعة: المالية -->
+                <!-- المالية -->
                 <div class="menu-section">
                     <div class="menu-title">المالية</div>
                     <ul>
@@ -41,8 +37,7 @@
                         <li><a href="#" onclick="loadSection('profitLog')"><i class="fas fa-chart-line"></i> سجل الأرباح</a></li>
                     </ul>
                 </div>
-
-                <!-- مجموعة: المستخدمون -->
+                <!-- المستخدمون -->
                 <div class="menu-section">
                     <div class="menu-title">المستخدمون</div>
                     <ul>
@@ -53,8 +48,7 @@
                         <li><a href="#" onclick="showReferrals()"><i class="fas fa-share-alt"></i> الإجالات</a></li>
                     </ul>
                 </div>
-
-                <!-- مجموعة: الإدارة -->
+                <!-- الإدارة -->
                 <div class="menu-section">
                     <div class="menu-title">الإدارة</div>
                     <ul>
@@ -66,31 +60,23 @@
                         <li><a href="#" onclick="showTwoFactor()"><i class="fas fa-lock"></i> الحقوق بخطوتين</a></li>
                     </ul>
                 </div>
-
-                <!-- مجموعة: الإعدادات -->
+                <!-- الإعدادات -->
                 <div class="menu-section">
                     <div class="menu-title">الإعدادات</div>
                     <ul>
                         <li><a href="#" onclick="loadSection('maintenance')"><i class="fas fa-tools"></i> وضع الصيانة</a></li>
                     </ul>
                 </div>
-
             </div>
         </div>
 
-        <!-- ===== المحتوى الرئيسي ===== -->
+        <!-- المحتوى الرئيسي -->
         <div class="main-content">
-            <!-- الشريط العلوي -->
             <div class="top-bar">
                 <i class="fas fa-bars menu-icon" onclick="toggleSidebar()"></i>
                 <h2><i class="fas fa-crown"></i> لوحة التحكم</h2>
-                <div class="user-info">
-                    <span id="adminName"></span>
-                    <button id="logoutBtn" onclick="logout()">تسجيل خروج</button>
-                </div>
+                <!-- تم إزالة معلومات المستخدم وزر تسجيل الخروج -->
             </div>
-
-            <!-- منطقة عرض المحتوى الديناميكي -->
             <div class="content-area" id="contentArea">
                 <h1>مرحباً بك في لوحة التحكم</h1>
                 <p>اختر أحد الأقسام من القائمة الجانبية.</p>
@@ -98,10 +84,7 @@
         </div>
     </div>
 
-    <!-- عنصر الإشعارات (Toast) -->
     <div id="toast" class="toast"></div>
-
-    <!-- نوافذ منبثقة (سنستخدم واحدة عامة) -->
     <div id="genericModal" class="modal">
         <div class="modal-content" id="modalContent">
             <i class="fas fa-times close-btn" onclick="closeModal('genericModal')"></i>
@@ -109,25 +92,10 @@
         </div>
     </div>
 
-    <!-- استيراد ملفات JavaScript (بدون type="module") -->
     <script src="../shared/airtable-config.js"></script>
     <script src="../shared/airtable-service.js"></script>
     <script src="js/helpers.js"></script>
     <script src="js/admin.js"></script>
-
-    <script>
-        // دوال عامة بسيطة
-        window.toggleSidebar = function() {
-            document.getElementById('sidebar').classList.toggle('show');
-        };
-
-        window.logout = function() {
-            if (window.showToast) {
-                window.showToast('✅ تم تسجيل الخروج');
-            } else {
-                alert('تم تسجيل الخروج');
-            }
-        };
-    </script>
+    <script>loadSection('dashboard');</script>
 </body>
 </html>
