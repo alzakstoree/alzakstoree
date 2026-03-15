@@ -1,5 +1,5 @@
 /* ==================== admin-style.css ==================== */
-/* تنسيقات لوحة التحكم - ALZAK STORE */
+/* تنسيقات لوحة التحكم - ALZAK STORE (نسخة محسنة) */
 * {
     margin: 0;
     padding: 0;
@@ -137,22 +137,6 @@ body {
     font-size: 24px;
 }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-#logoutBtn {
-    background: #ef4444;
-    color: #fff;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-weight: 700;
-}
-
 /* منطقة المحتوى */
 .content-area {
     background: #111;
@@ -162,12 +146,12 @@ body {
     min-height: 500px;
 }
 
-/* ===== بطاقات الإحصائيات ===== */
+/* ===== بطاقات الإحصائيات (محسنة) ===== */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
-    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 .stat-card {
@@ -186,13 +170,93 @@ body {
 .stat-card h3 {
     color: #888;
     font-size: 14px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .stat-card p {
     color: #fbbf24;
     font-size: 2em;
     font-weight: 900;
+    margin-bottom: 5px;
+}
+
+.stat-card small {
+    color: #666;
+    font-size: 12px;
+    display: block;
+}
+
+.stat-link {
+    color: #fbbf24;
+    text-decoration: none;
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    transition: 0.2s;
+}
+
+.stat-link:hover {
+    color: #fff;
+}
+
+/* صفوف البطاقات */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* بطاقة وضع الصيانة */
+.maintenance-card {
+    background: #111;
+    border: 2px solid #ef4444;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.maintenance-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.maintenance-info i {
+    font-size: 30px;
+    color: #ef4444;
+}
+
+.maintenance-text h4 {
+    color: #ef4444;
+    margin-bottom: 5px;
+}
+
+.maintenance-text p {
+    color: #888;
+    font-size: 12px;
+}
+
+.maintenance-toggle {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 25px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.maintenance-toggle:hover {
+    background: #dc2626;
 }
 
 /* ===== شبكة عرض السجلات ===== */
@@ -385,6 +449,9 @@ tr:last-child td {
         width: 260px;
     }
     .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .stats-row {
         grid-template-columns: 1fr;
     }
     .records-grid {
