@@ -1,1 +1,399 @@
-.
+/* ==================== admin-style.css ==================== */
+/* تنسيقات لوحة التحكم - ALZAK STORE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    background: #0a0a0a;
+    color: #fff;
+}
+
+/* الحاوية الرئيسية */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ===== القائمة الجانبية (Sidebar) ===== */
+.sidebar {
+    width: 280px;
+    background: #111;
+    border-left: 2px solid #fbbf24;
+    height: 100vh;
+    position: fixed;
+    right: -280px;
+    transition: 0.3s;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+}
+
+.sidebar.show {
+    right: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid #333;
+    color: #fbbf24;
+}
+
+.sidebar-header h3 {
+    font-size: 18px;
+}
+
+.close-btn {
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.sidebar-menu {
+    padding: 15px;
+}
+
+.menu-section {
+    margin-bottom: 20px;
+}
+
+.menu-title {
+    color: #fbbf24;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    padding-right: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-menu ul {
+    list-style: none;
+}
+
+.sidebar-menu li {
+    margin-bottom: 5px;
+}
+
+.sidebar-menu a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    transition: 0.2s;
+    font-size: 14px;
+}
+
+.sidebar-menu a:hover {
+    background: #fbbf24;
+    color: #000;
+}
+
+.sidebar-menu a i {
+    width: 20px;
+    color: #fbbf24;
+    transition: 0.2s;
+}
+
+.sidebar-menu a:hover i {
+    color: #000;
+}
+
+/* ===== المحتوى الرئيسي ===== */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    margin-right: 0;
+    transition: 0.3s;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #111;
+    padding: 15px 20px;
+    border-radius: 15px;
+    border: 2px solid #333;
+    margin-bottom: 20px;
+}
+
+.menu-icon {
+    font-size: 24px;
+    color: #fbbf24;
+    cursor: pointer;
+}
+
+.top-bar h2 {
+    color: #fbbf24;
+    font-size: 24px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#logoutBtn {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+/* منطقة المحتوى */
+.content-area {
+    background: #111;
+    border: 2px solid #333;
+    border-radius: 20px;
+    padding: 20px;
+    min-height: 500px;
+}
+
+/* ===== بطاقات الإحصائيات ===== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.stat-card {
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 15px;
+    padding: 20px 15px;
+    text-align: center;
+    transition: 0.2s;
+}
+
+.stat-card:hover {
+    border-color: #fbbf24;
+}
+
+.stat-card h3 {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.stat-card p {
+    color: #fbbf24;
+    font-size: 2em;
+    font-weight: 900;
+}
+
+/* ===== شبكة عرض السجلات ===== */
+.records-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.record-card {
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    transition: 0.2s;
+}
+
+.record-card:hover {
+    border-color: #fbbf24;
+}
+
+.record-card img {
+    max-width: 100px;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+/* ===== الجداول ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: #1a1a1a;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+th {
+    background: #fbbf24;
+    color: #000;
+    padding: 12px;
+    font-weight: 700;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* ===== الأزرار ===== */
+.add-btn {
+    background: #fbbf24;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.add-btn:hover {
+    background: #fff;
+}
+
+.edit-btn {
+    background: #22c55e;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 2px;
+}
+
+.delete-btn {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 2px;
+}
+
+/* ===== النوافذ المنبثقة (Modal) ===== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: #111;
+    border: 2px solid #fbbf24;
+    border-radius: 25px;
+    padding: 25px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    color: #fff;
+    position: relative;
+}
+
+.modal-content h3 {
+    color: #fbbf24;
+    margin-bottom: 20px;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+    width: 100%;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 8px 0;
+    color: #fff;
+    font-size: 14px;
+}
+
+.modal-content input:focus {
+    border-color: #fbbf24;
+    outline: none;
+}
+
+.modal-content button {
+    background: #fbbf24;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.modal-content .close-btn {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    background: none;
+    color: #fbbf24;
+    font-size: 24px;
+    width: auto;
+    padding: 0;
+}
+
+/* ===== الإشعارات (Toast) ===== */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    border: 2px solid #fbbf24;
+    padding: 12px 25px;
+    border-radius: 30px;
+    display: none;
+    z-index: 3000;
+    color: #fff;
+    text-align: center;
+}
+
+.toast.show {
+    display: block;
+}
+
+/* ===== تحسينات للجوال ===== */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 260px;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .records-grid {
+        grid-template-columns: 1fr;
+    }
+    table {
+        font-size: 12px;
+    }
+    td, th {
+        padding: 8px 4px;
+    }
+}
