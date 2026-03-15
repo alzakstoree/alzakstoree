@@ -1,189 +1,137 @@
-// ==================== dashboard.js ====================
-// هذا الملف خاص بالصفحة الرئيسية (لوحة القيادة)
-
-// تحميل الإحصائيات عند فتح الصفحة
-window.addEventListener('load', async () => {
-  await loadDashboardStats();
-});
-
-async function loadDashboardStats() {
-  const contentDiv = document.getElementById('contentArea');
-  contentDiv.innerHTML = '<p style="text-align:center;">⏳ جاري التحميل...</p>';
-
-  try {
-    // جلب البيانات من Airtable
-    const products = await window.fetchRecords('products') || [];
-    const users = await window.fetchRecords('users') || [];
-    const orders = await window.fetchRecords('orders') || [];
-    const charges = await window.fetchRecords('charges') || [];
-
-    // إحصائيات المنتجات
-    const activeProducts = products.length;
-
-    // إحصائيات المستخدمين
-    const totalUsers = users.length;
-    const totalUserBalance = users.reduce((sum, u) => sum + (u.fields.walletBalance || 0), 0);
-    const allowedDebtUsers = users.filter(u => u.fields.allowedDebt).length;
-
-    // إحصائيات الطلبات
-    const totalOrders = orders.length;
-    const pendingOrders = orders.filter(o => o.fields.status === 'pending').length;
-    const totalSales = orders.reduce((sum, o) => sum + (o.fields.price || 0), 0);
-
-    // عدد الطلبات هذا الشهر
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
-    const monthlyOrders = orders.filter(o => 
-      o.fields.createdAt >= startOfMonth && o.fields.createdAt <= endOfMonth
-    ).length;
-
-    // تنسيق التاريخ للعرض
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    const monthRange = `${lastDay.toLocaleDateString()} – ${firstDay.toLocaleDateString()}`;
-
-    // إحصائيات الشحن
-    const processedCharges = charges.filter(c => c.fields.status === 'completed').length;
-
-    // إحصائيات الدين
-    const totalDebt = users.reduce((sum, u) => sum + (u.fields.debtBalance || 0), 0);
-
-    // التكلفة الكلية (افتراضية)
-    const totalCost = 0;
-    const netProfit = totalSales - totalCost;
-    const receivedAmount = totalSales;
-
-    // توليد HTML للإحصائيات
-    const html = `
-      <h2>📊 لوحة القيادة</h2>
-      
-      <!-- الصف الأول: إجمالي المبيعات، التكلفة الكلية، الأرباح الصافية، المبلغ المستلم -->
-      <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
-        <div class="stat-card">
-          <h3>إجمالي المبيعات</h3>
-          <p>$${totalSales.toFixed(2)}</p>
-          <small>المبلغ المستلم من العملاء</small>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - ALZAK STORE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/admin-style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- القائمة الجانبية -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-crown"></i>
+                <h3>لوحة الإدارة</h3>
+                <span class="version">V1.2</span>
+                <i class="fas fa-times close-btn" onclick="toggleSidebar()"></i>
+            </div>
+            <div class="sidebar-menu">
+                <!-- مجموعة: الرئيسية -->
+                <div class="menu-section">
+                    <div class="menu-title">الرئيسية</div>
+                    <ul>
+                        <li><a href="#" onclick="loadSection('dashboard')"><i class="fas fa-tachometer-alt"></i> لوحة القيادة</a></li>
+                        <li><a href="#" onclick="loadSection('notifications')"><i class="fas fa-bell"></i> إرسال إشعار</a></li>
+                        <li><a href="#" onclick="loadSection('providers')"><i class="fas fa-truck"></i> إدارة المزودين</a></li>
+                        <li><a href="#" onclick="loadSection('import')"><i class="fas fa-upload"></i> استيراد منتجات</a></li>
+                    </ul>
+                </div>
+                <!-- مجموعة: المالية -->
+                <div class="menu-section">
+                    <div class="menu-title">المالية</div>
+                    <ul>
+                        <li><a href="#" onclick="loadSection('paymentMethods')"><i class="fas fa-credit-card"></i> طرق الدفع</a></li>
+                        <li><a href="#" onclick="loadSection('charges')"><i class="fas fa-money-bill-wave"></i> طلبات الشحن</a></li>
+                        <li><a href="#" onclick="loadSection('storeCards')"><i class="fas fa-id-card"></i> بطاقات المتجر</a></li>
+                        <li><a href="#" onclick="loadSection('vipProfit')"><i class="fas fa-percent"></i> نسبة ربح VIP</a></li>
+                        <li><a href="#" onclick="loadSection('currencies')"><i class="fas fa-coins"></i> العملات</a></li>
+                        <li><a href="#" onclick="loadSection('profitLog')"><i class="fas fa-chart-line"></i> سجل الأرباح</a></li>
+                    </ul>
+                </div>
+                <!-- مجموعة: المستخدمون -->
+                <div class="menu-section">
+                    <div class="menu-title">المستخدمون</div>
+                    <ul>
+                        <li><a href="#" onclick="loadSection('users')"><i class="fas fa-users-cog"></i> إدارة المستخدمين</a></li>
+                        <li><a href="#" onclick="loadSection('debtBalance')"><i class="fas fa-hand-holding-usd"></i> الرصيد المدين</a></li>
+                        <li><a href="#" onclick="loadSection('topSpenders')"><i class="fas fa-trophy"></i> الأكثر صرفاً</a></li>
+                        <li><a href="#" onclick="loadSection('vipUsers')"><i class="fas fa-star"></i> الدولاء</a></li>
+                        <li><a href="#" onclick="loadSection('referrals')"><i class="fas fa-share-alt"></i> الإجالات</a></li>
+                    </ul>
+                </div>
+                <!-- مجموعة: الطلبات -->
+                <div class="menu-section">
+                    <div class="menu-title">الطلبات</div>
+                    <ul>
+                        <li><a href="#" onclick="loadSection('orders')"><i class="fas fa-shopping-cart"></i> الطلبات</a></li>
+                        <li><a href="#" onclick="loadSection('disputes')"><i class="fas fa-exclamation-triangle"></i> طلبات الاعتراض</a></li>
+                    </ul>
+                </div>
+                <!-- مجموعة: الأقسام والمنتجات -->
+                <div class="menu-section">
+                    <div class="menu-title">الأقسام والمنتجات</div>
+                    <ul>
+                        <li><a href="#" onclick="loadSection('categories')"><i class="fas fa-layer-group"></i> الأقسام</a></li>
+                        <li><a href="#" onclick="loadSection('addProduct')"><i class="fas fa-plus-circle"></i> إضافة منتج</a></li>
+                        <li><a href="#" onclick="loadSection('manageProducts')"><i class="fas fa-edit"></i> إدارة المنتجات</a></li>
+                        <li><a href="#" onclick="loadSection('stock')"><i class="fas fa-boxes"></i> منتجات المخزون</a></li>
+                    </ul>
+                </div>
+                <!-- مجموعة: الإدارة -->
+                <div class="menu-section">
+                    <div class="menu-title">الإدارة</div>
+                    <ul>
+                        <li><a href="#" onclick="loadSection('design')"><i class="fas fa-paint-brush"></i> التصميم</a></li>
+                        <li><a href="#" onclick="loadSection('orderMessages')"><i class="fas fa-envelope"></i> رسائل الطلب والردود</a></li>
+                        <li><a href="#" onclick="loadSection('orderManagement')"><i class="fas fa-sort-amount-up"></i> إدارة الترتيب</a></li>
+                        <li><a href="#" onclick="loadSection('contactMethods')"><i class="fas fa-phone-alt"></i> وسائل التواصل</a></li>
+                        <li><a href="#" onclick="loadSection('adminAccounts')"><i class="fas fa-user-shield"></i> حسابات الإدارة</a></li>
+                        <li><a href="#" onclick="loadSection('twoFactor')"><i class="fas fa-lock"></i> الحقوق بخطوتين</a></li>
+                    </ul>
+                </div>
+                <!-- مجموعة: العمليات والإضافات -->
+                <div class="menu-section">
+                    <div class="menu-title">العمليات</div>
+                    <ul>
+                        <li><a href="#" onclick="loadSection('operations')"><i class="fas fa-cogs"></i> العمليات</a></li>
+                        <li><a href="#" onclick="loadSection('viewAll')"><i class="fas fa-eye"></i> عرضها</a></li>
+                    </ul>
+                </div>
+                <!-- مجموعة: الإعدادات -->
+                <div class="menu-section">
+                    <div class="menu-title">الإعدادات</div>
+                    <ul>
+                        <li><a href="#" onclick="loadSection('maintenance')"><i class="fas fa-tools"></i> وضع الصيانة</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="stat-card">
-          <h3>التكلفة الكلية</h3>
-          <p>$${totalCost.toFixed(2)}</p>
-          <small>تكلفة شراء المنتجات</small>
-        </div>
-        <div class="stat-card">
-          <h3>الأرباح الصافية</h3>
-          <p>$${netProfit.toFixed(2)}</p>
-          <small>بعد خصم التكاليف</small>
-        </div>
-        <div class="stat-card">
-          <h3>المبلغ المستلم</h3>
-          <p>$${receivedAmount.toFixed(2)}</p>
-          <small>من العملاء</small>
-        </div>
-      </div>
 
-      <!-- بطاقة وضع الصيانة -->
-      <div class="maintenance-card">
-        <div style="display: flex; align-items: center; gap: 15px;">
-          <i class="fas fa-tools" style="font-size: 30px; color: #ef4444;"></i>
-          <div>
-            <h4 style="color: #ef4444;">وضع الصيانة</h4>
-            <p style="color: #888;">التحكم بتفعيل أو إيقاف واجهة المستخدمين</p>
-          </div>
+        <!-- المحتوى الرئيسي -->
+        <div class="main-content">
+            <div class="top-bar">
+                <i class="fas fa-bars menu-icon" onclick="toggleSidebar()"></i>
+                <h2><i class="fas fa-crown"></i> لوحة التحكم</h2>
+            </div>
+            <div class="content-area" id="contentArea">
+                <h1>مرحباً بك في لوحة التحكم</h1>
+                <p>اختر أحد الأقسام من القائمة الجانبية.</p>
+            </div>
         </div>
-        <button class="maintenance-toggle" onclick="toggleMaintenance()">تفعيل وضع الصيانة</button>
-      </div>
+    </div>
 
-      <!-- الصف الثاني: إجمالي المبلغ المدين + عدد الطلبات هذا الشهر -->
-      <div class="stats-row">
-        <div class="stat-card">
-          <h3>إجمالي المبلغ المدين</h3>
-          <p>$${totalDebt.toFixed(2)}</p>
-          <div style="margin-top: 10px;">
-            <a href="pages/debt-balance.html" class="stat-link">عرض تفاصيل الرصيد المدين <i class="fas fa-arrow-left"></i></a>
-          </div>
+    <div id="toast" class="toast"></div>
+    <div id="genericModal" class="modal">
+        <div class="modal-content" id="modalContent">
+            <i class="fas fa-times close-btn" onclick="closeModal('genericModal')"></i>
+            <div id="modalBody"></div>
         </div>
-        <div class="stat-card">
-          <h3>عدد الطلبات هذا الشهر</h3>
-          <p>${monthlyOrders}</p>
-          <small>${monthRange}</small>
-        </div>
-      </div>
+    </div>
 
-      <!-- الصف الثالث: بطاقات متعددة -->
-      <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
-        <div class="stat-card">
-          <h3>الطلبات قيد الانتظار</h3>
-          <p>${pendingOrders}</p>
-          <div>
-            <a href="pages/orders.html" class="stat-link">إدارة الطلبات <i class="fas fa-arrow-left"></i></a>
-          </div>
-        </div>
-        <div class="stat-card">
-          <h3>المنتجات النشطة</h3>
-          <p>${activeProducts}</p>
-        </div>
-        <div class="stat-card">
-          <h3>عدد المستخدمين</h3>
-          <p>${totalUsers}</p>
-          <div>
-            <a href="pages/users.html" class="stat-link">عرض المستخدمين <i class="fas fa-arrow-left"></i></a>
-          </div>
-        </div>
-        <div class="stat-card">
-          <h3>إجمالي رصيد المستخدمين</h3>
-          <p>$${totalUserBalance.toFixed(2)}</p>
-        </div>
-      </div>
-
-      <!-- الصف الرابع -->
-      <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
-        <div class="stat-card">
-          <h3>طلبات شحن معالجة</h3>
-          <p>${processedCharges}</p>
-          <div>
-            <a href="pages/charges.html" class="stat-link">إدارة طلبات الشحن <i class="fas fa-arrow-left"></i></a>
-          </div>
-        </div>
-        <div class="stat-card">
-          <h3>المستخدمون المسموح لهم برصيد مدين</h3>
-          <p>${allowedDebtUsers}</p>
-        </div>
-        <div class="stat-card">
-          <h3>عدد الطلبات</h3>
-          <p>${totalOrders}</p>
-          <div>
-            <a href="pages/orders.html" class="stat-link">عرض التفاصيل <i class="fas fa-arrow-left"></i></a>
-          </div>
-        </div>
-      </div>
-    `;
-
-    contentDiv.innerHTML = html;
-  } catch (error) {
-    contentDiv.innerHTML = `<p style="color: red;">❌ حدث خطأ: ${error.message}</p>`;
-    showToast('فشل تحميل الإحصائيات', 'error');
-  }
-}
-
-// دالة تبديل وضع الصيانة من البطاقة
-window.toggleMaintenance = async function() {
-  try {
-    const records = await window.fetchRecords('settings') || [];
-    const currentMode = records.length > 0 ? (records[0].fields.maintenanceMode || false) : false;
-    const newMode = !currentMode;
-    
-    if (records.length > 0) {
-      await window.updateRecord('settings', records[0].id, { maintenanceMode: newMode });
-    } else {
-      await window.createRecord('settings', { maintenanceMode: newMode });
-    }
-    
-    showToast(newMode ? '🔧 وضع الصيانة مفعل' : '✅ وضع الصيانة معطل', 'info');
-    // تحديث نص الزر
-    const maintBtn = document.querySelector('.maintenance-toggle');
-    if (maintBtn) maintBtn.textContent = newMode ? 'تعطيل وضع الصيانة' : 'تفعيل وضع الصيانة';
-  } catch (error) {
-    showToast('فشل تبديل وضع الصيانة', 'error');
-  }
-};
+    <script src="../shared/airtable-config.js"></script>
+    <script src="../shared/airtable-service.js"></script>
+    <script src="js/helpers.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        window.toggleSidebar = function() {
+            document.getElementById('sidebar').classList.toggle('show');
+        };
+        // تحميل لوحة القيادة عند بدء الصفحة
+        window.addEventListener('load', () => {
+            loadSection('dashboard');
+        });
+    </script>
+</body>
+</html>
